@@ -228,6 +228,36 @@ Logs are written to stdout (consumed by the Docker logging driver) and to
 `<LOG_DIR>/mailattachments2dropbox.log`, which is bind-mounted to `./logs/` by
 the default `compose.yaml`.
 
+## Linux host: log directory ownership
+
+The container writes to `/app/logs`, which is bind-mounted to `./logs/` on
+the host. On Linux that directory must be writable by the UID the container
+runs as. By default the container uses UID 1000 (baked into the image as the
+`app` user); if your host directory is owned by a different UID (for example
+because you created `./logs/` while logged in as a non-1000 user), the worker
+fails on startup with `PermissionError: '/app/logs/mailattachments2dropbox.log'`.
+
+Two ways to fix this:
+
+1. **Run the container as your host user** (recommended). Add `PUID` / `PGID`
+   to `.env` so they propagate into compose's `user:` directive:
+
+   ```bash
+   echo "PUID=$(id -u)" >> .env
+   echo "PGID=$(id -g)" >> .env
+   docker compose up -d
+   ```
+
+2. **Or chown the logs directory to UID 1000:**
+
+   ```bash
+   sudo chown -R 1000:1000 logs
+   docker compose up -d
+   ```
+
+On Docker Desktop for macOS and Windows the UIDs are transparently mapped, so
+you can leave the defaults.
+
 ## Operational notes
 
 - A mail that fails routing (unknown branch or subfolder) is left untouched so

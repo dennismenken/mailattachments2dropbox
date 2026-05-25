@@ -5,6 +5,10 @@ services:
     image: mailattachments2dropbox:local
     container_name: mailattachments2dropbox
     restart: always
+    # On Linux hosts the bind-mounted ./logs directory is owned by the host
+    # user, so the container must write as that UID. PUID/PGID default to 1000
+    # (the user baked into the image) and can be overridden in .env.
+    user: "${PUID:-1000}:${PGID:-1000}"
     env_file:
       - .env
     volumes:
