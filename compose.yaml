@@ -1,0 +1,18 @@
+services:
+  mailattachments2dropbox:
+    build:
+      context: .
+    image: mailattachments2dropbox:local
+    container_name: mailattachments2dropbox
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+      - ./mapping.yaml:/app/mapping.yaml:ro
+    stop_grace_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"

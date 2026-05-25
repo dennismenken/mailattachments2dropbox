@@ -1,0 +1,20 @@
+# Routing taxonomy used to translate body sentinels to Dropbox folder paths.
+#
+# Body sentinel ":::<branch>:::<subfolder>" -> "<dropbox_root>/<branch.folder>/<branch.subfolders[subfolder]>"
+# Body sentinel ":::<branch>"               -> "<dropbox_root>/<branch.folder>/<branch.subfolders[default_subfolder]>"
+# No sentinel                                -> defaults from .env (DEFAULT_BRANCH, DEFAULT_SUBFOLDER_KEY)
+#
+# The keys (in, out, auto, paypal, ...) are what users type in the mail body.
+# The values are the actual Dropbox folder names (created on demand).
+
+branches:
+  in:
+    folder: Inbox
+    default_subfolder: auto
+    subfolders:
+      auto:   "Auto-Assignment"
+      paypal: "PayPal"
+  out:
+    folder: Outbox
+    default_subfolder: ""
+    subfolders: {}
